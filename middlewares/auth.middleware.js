@@ -3,9 +3,9 @@ import dotenv from "dotenv";
 dotenv.config();
 
 // Secret for JWT
-const JWT_SECRET = process.env.JWT_SECRET; // Change this in the .env file in production
+const JWT_SECRET = process.env.JWT_SECRET;
 
-// Middleware to protect routes
+// middleware to authenticate the user by verfiying their JWT token
 function authenticateToken(req, res, next) {
   // Get token from the cookies
   const token = req.cookies.authToken;
@@ -26,10 +26,10 @@ function authenticateToken(req, res, next) {
   }
 }
 
-// Middleware to authorize user by role (e.g., 'instructor' or 'student')
+// Middleware to authorize user by role, we need to pass the role in the middle
 function authorizeRole(roles = []) {
   return (req, res, next) => {
-    if (!roles.includes(req.user.role)) {
+    if (!roles.includes(req.user.role) || !req.user) {
       return res
         .status(403)
         .json({ message: "Access denied. You don't have permissions." });

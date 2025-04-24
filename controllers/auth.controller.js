@@ -7,7 +7,7 @@ import dotenv from "dotenv";
 // Secret for JWT
 dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET;
-
+const oneDay = 24 * 60 * 60 * 1000;
 // User Registration
 export async function signup(req, res) {
   const { email, password, role } = req.body;
@@ -21,7 +21,7 @@ export async function signup(req, res) {
     return res.status(400).json({ message: "User already exists" });
   }
 
-  // Hash password
+  // encrypting the password using bcrypt
   const hashedPassword = await bcrypt.hash(password, 10);
 
   // Create new user
@@ -53,19 +53,25 @@ export async function login(req, res) {
     return res.status(400).json({ message: "Invalid credentials" });
   }
 
-  // Generate JWT token
+  // Generate JWT token  
   const token = jwt.sign(
     { userId: user.id, email: user.email, role: user.role },
     JWT_SECRET,
-    { expiresIn: "1h" }
+    { expiresIn: oneDay }
   );
 
   // Set JWT token in an HTTP-only, Secure cookie
   res.cookie("authToken", token, {
     httpOnly: true, // Prevent access to the cookie via JavaScript
     secure: true, // sent over https
-    maxAge: 3600000, // Token expiration (1 hour)
+    maxAge: oneDay, // Token expiration (1 hour)
     sameSite: "Strict", // Protect against CSRF attacks
   });
   return res.status(200).json({ message: "Login successful" });
+}
+
+// this route will clear the cookie when using logout route
+export function logout(req, res) {
+  res.clearCookie("authToken", { httpOnly: true, sameSite: "Strict" });
+  res.status(200).json({ message: "Logout succesful" });
 }

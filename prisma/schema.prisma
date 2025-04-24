@@ -56,11 +56,15 @@ model Enrollment {
 }
 
 model Progress {
-  id          Int      @id @default(autoincrement())
-  enrollment  Enrollment @relation(fields: [enrollmentId], references: [id])
-  enrollmentId Int
-  session     Session   @relation(fields: [sessionId], references: [id])
-  sessionId   Int
-  isCompleted Boolean  @default(false) // Marks if the session is completed
-  completionDate DateTime? // Optional, only set if session is marked complete
+  id            Int      @id @default(autoincrement())
+  enrollment    Enrollment @relation(fields: [enrollmentId], references: [id])
+  enrollmentId  Int
+  session       Session @relation(fields: [sessionId], references: [id])
+  sessionId     Int
+  isCompleted   Boolean  @default(false)
+  completionDate DateTime?
+
+  // Composite unique constraint
+  @@unique([enrollmentId, sessionId])  // Ensure the combination of these two fields is unique
 }
+
