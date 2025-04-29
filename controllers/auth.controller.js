@@ -42,6 +42,7 @@ export async function login(req, res) {
     where: { email },
   });
 
+  const { password: _, ...userData } = user;
   if (!user) {
     return res.status(404).json({ message: "User not found" });
   }
@@ -53,7 +54,7 @@ export async function login(req, res) {
     return res.status(400).json({ message: "Invalid credentials" });
   }
 
-  // Generate JWT token  
+  // Generate JWT token
   const token = jwt.sign(
     { userId: user.id, email: user.email, role: user.role },
     JWT_SECRET,
@@ -62,16 +63,44 @@ export async function login(req, res) {
 
   // Set JWT token in an HTTP-only, Secure cookie
   res.cookie("authToken", token, {
-    httpOnly: true, // Prevent access to the cookie via JavaScript
-    secure: true, // sent over https
-    maxAge: oneDay, // Token expiration (1 hour)
-    sameSite: "Strict", // Protect against CSRF attacks
+    httpOnly: true, // Makes the cookie inaccessible to JavaScript (prevents XSS attacks)
+    secure: false, // Ensure this is only sent over HTTPS (ensure you're using HTTPS in production)
+    sameSite: "Strict", // Ensures cookie is only sent for same-site requests (prevents CSRF)
+    maxAge: oneDay, // Token expiration time
+    path: "/", // Ensure the cookie is available across all routes
   });
-  return res.status(200).json({ message: "Login successful" });
+  return res.status(200).json({
+    message: "Login successful",
+    token,
+    userData,
+  });
 }
 
 // this route will clear the cookie when using logout route
 export function logout(req, res) {
   res.clearCookie("authToken", { httpOnly: true, sameSite: "Strict" });
   res.status(200).json({ message: "Logout succesful" });
+}
+
+export async function getCurrentUser(req, res) {
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: req.user.userId,
+      },
+    });
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+    return res.status(200).json({
+      message: "User Data fetched successfully",
+      role: user.role,
+    });
+  } catch (error) {
+      return res.status(500).json({
+        message: "Error fetching user data"
+      })
+  }
 }
