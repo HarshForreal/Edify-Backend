@@ -10,15 +10,11 @@ dotenv.config();
 
 const app = express();
 
-// Use cookie-parser middleware to parse cookies
 app.use(cookieParser());
 
-// Enable CORS with credentials for cross-origin requests
 app.use(
   cors({
-    // frontend url
     origin: "http://localhost:5173",
-    // allow cookies to be sent which will have token
     credentials: true,
   })
 );

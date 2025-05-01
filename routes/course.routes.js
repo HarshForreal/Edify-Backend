@@ -4,7 +4,8 @@ import {
   getAllCourse,
   getCourseById,
   updateCourse,
-  deleteCourse
+  deleteCourse,
+  getInstructorCourses,
 } from "../controllers/course.controller.js";
 
 import {
@@ -13,6 +14,7 @@ import {
 } from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
+
 // endpoint to create course
 router.post(
   "/create",
@@ -20,11 +22,20 @@ router.post(
   authorizeRole(["instructor"]),
   createCourse
 );
+
 // endpoint to get all course
 router.get("/", authenticateToken, getAllCourse);
+
+router.get(
+  "/getInstructorCourses",
+  authenticateToken,
+  authorizeRole(["instructor"]),
+  getInstructorCourses
+);
+
 // endpoint to get course by id
 router.get("/:id", authenticateToken, getCourseById);
-export default router;
+
 // endpoint to update course
 router.put(
   "/:id",
@@ -32,6 +43,7 @@ router.put(
   authorizeRole(["instructor"]),
   updateCourse
 );
+
 // endpoint to delete course
 router.delete(
   "/:id",
@@ -39,3 +51,5 @@ router.delete(
   authorizeRole(["instructor"]),
   deleteCourse
 );
+
+export default router;

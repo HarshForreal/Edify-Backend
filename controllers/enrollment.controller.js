@@ -122,6 +122,12 @@ export async function getCourseProgress(req, res) {
     ).length;
 
     const progressPercentage = (completedSessions / totalSessions) * 100;
+    const sessionDetails = sessions.map((session) => ({
+      id: session.id,
+      title: session.title,
+      isCompleted:
+        session.progress.length > 0 && session.progress[0].isCompleted,
+    }));
 
     // Return course progress (percentage)
     return res.status(200).json({
@@ -129,6 +135,7 @@ export async function getCourseProgress(req, res) {
       totalSessions,
       completedSessions,
       progressPercentage,
+      sessions: sessionDetails,
     });
   } catch (error) {
     return res
@@ -137,7 +144,7 @@ export async function getCourseProgress(req, res) {
   }
 }
 
-export async function markAsCompleted(req, res) {
+export async function markSessionAsCompleted(req, res) {
   const { sessionId, courseId } = req.body;
   const { userId } = req.user;
 

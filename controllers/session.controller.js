@@ -46,7 +46,7 @@ export async function getSessionsByCourse(req, res) {
     });
     if (sessions.length === 0) {
       return res.status(404).json({
-        message: `No sessions found for this course ${courseId}`,
+        message: `No Sessions found for this Course`,
       });
     }
     res.status(200).json({

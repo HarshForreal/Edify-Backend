@@ -8,7 +8,7 @@ import {
   getCourseProgress,
   getEnrolled,
   listOfEnrolledCourses,
-  markAsCompleted,
+  markSessionAsCompleted,
 } from "../controllers/enrollment.controller.js";
 
 const router = express.Router();
@@ -17,6 +17,6 @@ router.use(authorizeRole(["student"]));
 router.post("/enrollInCourse", getEnrolled);
 router.get("/getListOfEnrollments", listOfEnrolledCourses);
 router.get("/courseProgress/:id", getCourseProgress);
-router.post("/markSessionCompleted", markAsCompleted);
+router.post("/markSessionCompleted", markSessionAsCompleted);
 
 export default router;
