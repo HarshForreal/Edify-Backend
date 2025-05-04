@@ -2,10 +2,9 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export async function getEnrolled(req, res) {
-  const { courseId } = req.body; // Use req.body for POST requests
-  const { userId } = req.user; // Extract userId from req.user
+  const { courseId } = req.body;
+  const { userId } = req.user;
   try {
-    // Step 1: Check if the course exists
     const course = await prisma.course.findUnique({
       where: { id: Number(courseId) },
     });
@@ -16,7 +15,6 @@ export async function getEnrolled(req, res) {
       });
     }
 
-    // Step 2: Check if the user is already enrolled in the course
     const isEnrolled = await prisma.enrollment.findFirst({
       where: {
         courseId: Number(courseId),
@@ -79,7 +77,6 @@ export async function listOfEnrolledCourses(req, res) {
   }
 }
 
-// Corrected function for getting course progress
 export async function getCourseProgress(req, res) {
   const { id } = req.params; // courseId from URL params
   const { userId } = req.user; // userId from the JWT token (from the authenticate middleware)

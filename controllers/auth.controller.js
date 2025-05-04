@@ -61,13 +61,12 @@ export async function login(req, res) {
     { expiresIn: oneDay }
   );
 
-  // Set JWT token in an HTTP-only, Secure cookie
   res.cookie("authToken", token, {
-    httpOnly: true, // Makes the cookie inaccessible to JavaScript (prevents XSS attacks)
-    secure: false, // Ensure this is only sent over HTTPS (ensure you're using HTTPS in production)
-    sameSite: "Strict", // Ensures cookie is only sent for same-site requests (prevents CSRF)
-    maxAge: oneDay, // Token expiration time
-    path: "/", // Ensure the cookie is available across all routes
+    httpOnly: true,
+    secure: false,
+    sameSite: "Strict",
+    maxAge: oneDay,
+    path: "/",
   });
   return res.status(200).json({
     message: "Login successful",
@@ -76,10 +75,13 @@ export async function login(req, res) {
   });
 }
 
-// this route will clear the cookie when using logout route
 export function logout(req, res) {
-  res.clearCookie("authToken", { httpOnly: true, sameSite: "Strict" });
-  res.status(200).json({ message: "Logout succesful" });
+  res.clearCookie("authToken", {
+    httpOnly: true,
+    sameSite: "Strict",
+    path: "/",
+  });
+  res.status(200).json({ message: "Logout successful" });
 }
 
 export async function getCurrentUser(req, res) {
@@ -99,8 +101,8 @@ export async function getCurrentUser(req, res) {
       role: user.role,
     });
   } catch (error) {
-      return res.status(500).json({
-        message: "Error fetching user data"
-      })
+    return res.status(500).json({
+      message: "Error fetching user data",
+    });
   }
 }
