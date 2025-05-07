@@ -21,14 +21,13 @@ async function main() {
     },
   });
 
-  // Create a sample course
   const course = await prisma.course.create({
     data: {
       title: "Introduction to JavaScript",
       description: "This is a beginner-level course for learning JavaScript.",
       category: "Programming",
-      videoUrl: "https://youtube.com/sampleVideo", // Example YouTube video link
-      instructorId: instructor.id, // Link course to the instructor
+      videoUrl: "https://youtube.com/sampleVideo",
+      instructorId: instructor.id,
     },
   });
 
@@ -38,7 +37,7 @@ async function main() {
       title: "Session 1: Basics of JavaScript",
       description: "Learn about variables, data types, and syntax.",
       videoUrl: "https://youtube.com/sampleSession1",
-      courseId: course.id, // Link session to the course
+      courseId: course.id,
     },
   });
 
@@ -47,15 +46,15 @@ async function main() {
       title: "Session 2: Functions and Loops",
       description: "Learn about functions and loops in JavaScript.",
       videoUrl: "https://youtube.com/sampleSession2",
-      courseId: course.id, // Link session to the course
+      courseId: course.id,
     },
   });
 
   // Create an enrollment for the student
   const enrollment = await prisma.enrollment.create({
     data: {
-      userId: student.id, // Link the enrollment to the student
-      courseId: course.id, // Link the enrollment to the course
+      userId: student.id,
+      courseId: course.id,
       status: "enrolled",
     },
   });

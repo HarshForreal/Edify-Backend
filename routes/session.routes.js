@@ -11,7 +11,6 @@ import {
 } from "../middlewares/auth.middleware.js";
 const router = express.Router();
 
-// only instructor can post the sessions
 router.post(
   "/createSession",
   authenticateToken,
@@ -19,7 +18,6 @@ router.post(
   createSession
 );
 
-// both instructor and students can fetch all sessions
 router.get(
   "/getSessionsByCourse/:courseId",
   authenticateToken,

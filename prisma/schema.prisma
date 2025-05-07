@@ -8,15 +8,22 @@ generator client {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  password  String
-  role      String   // 'student' or 'instructor'
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  courses   Course[] // One-to-many relation to courses (instructor)
+  id          Int        @id @default(autoincrement())
+  email       String     @unique
+  password    String?    // Make password optional for Google login
+  googleId    String?    @unique // For Google login
+  name        String?    // Store the user's name
+  avatarUrl   String?    // Add this field for profile pictures from Google
+  role        String     // 'student' or 'instructor'
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  courses     Course[]   // One-to-many relation to courses (instructor)
   enrollments Enrollment[] // One-to-many relation to enrollments (student)
+  reviews     Review[]   // One-to-many relation to reviews (student reviewing courses)
+  comments    Comment[]  // One-to-many relation to comments (student commenting on sessions)
 }
+
+
 
 model Course {
   id          Int        @id @default(autoincrement())
@@ -30,6 +37,8 @@ model Course {
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
   enrollments Enrollment[] // One-to-many relation to enrollments
+  reviews     Review[]    // One-to-many relation to reviews
+
 }
 
 model Session {
@@ -42,6 +51,7 @@ model Session {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   progress    Progress[] // One-to-many relation to progress
+  comments    Comment[]  // One-to-many relation to comments
 }
 
 model Enrollment {
@@ -53,6 +63,7 @@ model Enrollment {
   enrolledAt  DateTime @default(now())
   status      String   // 'enrolled', 'completed', 'dropped'
   progress    Progress[] // One-to-many relation to progress
+  
 }
 
 model Progress {
@@ -68,3 +79,27 @@ model Progress {
   @@unique([enrollmentId, sessionId])  // Ensure the combination of these two fields is unique
 }
 
+
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  rating    Int      // Rating out of 5 stars
+  comment   String?  // Optional comment
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId  Int
+  student   User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  studentId Int
+  reviewedAt DateTime @default(now())
+
+  @@unique([courseId, studentId])  // A student can only review a course once
+}
+
+model Comment {
+  id          Int      @id @default(autoincrement())
+  content     String   // Comment text
+  session     Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  sessionId   Int
+  student     User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  studentId   Int
+  createdAt   DateTime @default(now())
+}
