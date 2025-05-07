@@ -39,9 +39,8 @@ export async function signup(req, res) {
   });
   return res.status(201).json({ message: "Signup successful", newUser });
 }
-// Assuming this is part of your auth.controller.js file
 
-// Helper function to find or create a user with Google credentials
+//  find or create a user with Google credentials
 const findOrCreateGoogleUser = async (googleData, role) => {
   try {
     // First, check if a user with this Google ID already exists
@@ -73,61 +72,6 @@ const findOrCreateGoogleUser = async (googleData, role) => {
   }
 };
 
-// Main Google login handler
-// export const googleLogin = async (req, res) => {
-//   const { token, role } = req.body;
-
-//   if (!token) {
-//     return res.status(400).json({ message: "Token is required" });
-//   }
-
-//   if (!role) {
-//     return res
-//       .status(400)
-//       .json({ message: "Role must be provided for Google Sign-In" });
-//   }
-
-//   try {
-//     // Verify the ID token
-//     const ticket = await googleClient.verifyIdToken({
-//       idToken: token,
-//       audience: process.env.GOOGLE_CLIENT_ID,
-//     });
-
-//     const payload = ticket.getPayload();
-//     const googleData = {
-//       email: payload.email,
-//       name: payload.name,
-//       picture: payload.picture,
-//       sub: payload.sub,
-//     };
-
-//     console.log("Decoded Google Payload:", googleData);
-
-//     // Proceed with creating or finding the user in your database
-//     const user = await findOrCreateGoogleUser(googleData, role);
-
-//     // Generate JWT for your application
-//     const userToken = jwt.sign(
-//       { userId: user.id, email: user.email, role: user.role },
-//       process.env.JWT_SECRET,
-//       { expiresIn: "1d" }
-//     );
-
-//     res.status(200).json({
-//       token: userToken,
-//       user: {
-//         id: user.id,
-//         email: user.email,
-//         role: user.role,
-//         name: user.name,
-//       },
-//     });
-//   } catch (error) {
-//     console.error("Google login failed:", error);
-//     res.status(401).json({ message: "Google authentication failed" });
-//   }
-// };
 export const googleLogin = async (req, res) => {
   const { token, role } = req.body;
 
@@ -171,9 +115,9 @@ export const googleLogin = async (req, res) => {
     // Set cookie like traditional login
     res.cookie("authToken", userToken, {
       httpOnly: true,
-      secure: false, // change to true if using HTTPS in production
+      secure: false,
       sameSite: "Strict",
-      maxAge: 24 * 60 * 60 * 1000, // 1 day
+      maxAge: oneDay,
       path: "/",
     });
 

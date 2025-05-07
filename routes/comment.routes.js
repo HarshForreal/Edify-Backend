@@ -1,21 +1,20 @@
 import express from "express";
+import { addComment, getComments } from "../controllers/comment.controller.js";
 import {
-  addComment,
-  getComments,
-} from "../controllers/comment.controller.js";
-import { authenticateToken, authorizeRole } from "../middlewares/auth.middleware.js";
+  authenticateToken,
+  authorizeRole,
+} from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
-
-// Add a comment to a session (only students can comment)
+// Add comment for a session
 router.post(
   "/:sessionId/comments",
   authenticateToken,
-  authorizeRole(["student"]), // Only students can add comments
+  authorizeRole(["student"]),
   addComment
 );
 
-// Get comments for a session (instructors and students can view)
+// Get comments for a session
 router.get("/:sessionId/comments", authenticateToken, getComments);
 
 export default router;

@@ -15,7 +15,7 @@ import {
 
 const router = express.Router();
 
-// endpoint to create course
+// create course
 router.post(
   "/create",
   authenticateToken,
@@ -23,7 +23,7 @@ router.post(
   createCourse
 );
 
-// endpoint to get all course
+//  get all course
 router.get("/", authenticateToken, getAllCourse);
 
 router.get(
@@ -33,10 +33,10 @@ router.get(
   getInstructorCourses
 );
 
-// endpoint to get course by id
+// get course by id
 router.get("/:id", authenticateToken, getCourseById);
 
-// endpoint to update course
+// update course
 router.put(
   "/:id",
   authenticateToken,
@@ -44,7 +44,7 @@ router.put(
   updateCourse
 );
 
-// endpoint to delete course
+// delete course
 router.delete(
   "/:id",
   authenticateToken,

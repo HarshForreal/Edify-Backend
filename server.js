@@ -1,5 +1,5 @@
 import express from "express";
-import cookieParser from "cookie-parser"; // Import cookie-parser
+import cookieParser from "cookie-parser";
 import cors from "cors";
 import dotenv from "dotenv";
 import authRoutes from "./routes/auth.routes.js";
@@ -27,7 +27,7 @@ app.use("/api/courses", courseRoutes);
 app.use("/api/sessions", sessionRoutes);
 app.use("/api/enroll", enrollmentRoutes);
 app.use("/api/reviews", reviewRoutes);
-app.use("/api/comments", commentRoutes); 
+app.use("/api/comments", commentRoutes);
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port http://localhost:${PORT}`);

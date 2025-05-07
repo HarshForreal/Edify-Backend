@@ -19,14 +19,15 @@ function authenticateToken(req, res, next) {
   try {
     // Verify the token
     const decoded = jwt.verify(token, JWT_SECRET);
-    req.user = decoded; // Attach user data to the request object
-    next(); // Proceed to the next middleware or route handler
+    // Attach user data to the request object
+    req.user = decoded;
+    next();
   } catch (err) {
     return res.status(400).json({ message: "Invalid or expired token." });
   }
 }
 
-// Middleware to authorize user by role, we need to pass the role in the middle
+// Middleware to authorize user by role we need to pass the role in the middle
 function authorizeRole(roles = []) {
   return (req, res, next) => {
     if (!roles.includes(req.user.role) || !req.user) {

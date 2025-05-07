@@ -36,22 +36,46 @@ export async function createSession(req, res) {
     });
   }
 }
+
 export async function getSessionsByCourse(req, res) {
   const { courseId } = req.params;
+  const { userId } = req.user;
+
   try {
+    // Fetch sessions for the course
     const sessions = await prisma.session.findMany({
       where: {
         courseId: Number(courseId),
       },
+      include: {
+        progress: {
+          where: {
+            enrollment: {
+              userId: Number(userId),
+            },
+          },
+        },
+      },
     });
-    if (sessions.length === 0) {
+
+    // Map sessions to include completion status
+    const sessionsWithCompletionStatus = sessions.map((session) => {
+      const isCompleted = session.progress && session.progress.isCompleted;
+      return {
+        ...session,
+        isCompleted: isCompleted || false, // default to false if no progress data exists
+      };
+    });
+
+    if (sessionsWithCompletionStatus.length === 0) {
       return res.status(404).json({
         message: `No Sessions found for this Course`,
       });
     }
+
     res.status(200).json({
       message: `Session found for course ${courseId}`,
-      sessions,
+      sessions: sessionsWithCompletionStatus,
     });
   } catch (error) {
     res.status(500).json({
@@ -78,14 +102,14 @@ export async function updateSession(req, res) {
       });
     }
 
-    // Step 2: Check if the logged-in user is the instructor of the course
+    // Check if the logged-in user is the instructor of the course
     if (session.course.instructorId !== userId) {
       return res.status(403).json({
         message: "You are not authorized to update this session",
       });
     }
 
-    // Step 3: Update the session data
+    // Update the session data
     const updatedSession = await prisma.session.update({
       where: { id: Number(id) },
       data: {

@@ -34,14 +34,12 @@ export async function addReview(req, res) {
     console.log("Enrollment status:", enrollment);
 
     if (!enrollment) {
-      return res
-        .status(400)
-        .json({
-          message: "You must be enrolled in the course before reviewing.",
-        });
+      return res.status(400).json({
+        message: "You must be enrolled in the course before reviewing.",
+      });
     }
 
-    // If enrollment is not completed, check progress manually
+    // If enrollment is not completed check progress manually
     if (enrollment.status !== "completed") {
       // Count sessions
       const allSessions = await prisma.session.count({
@@ -91,10 +89,8 @@ export async function addReview(req, res) {
       }
     } catch (error) {
       console.error("Error checking existing review:", error);
-      // Continue anyway to see if we can create a review
     }
 
-    // Create the review
     try {
       const review = await prisma.review.create({
         data: {
